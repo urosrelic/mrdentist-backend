@@ -1,0 +1,26 @@
+{
+  "name": "mrdentist-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "crypto": "^1.0.1",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.1.1",
+    "eslint": "^9.1.1",
+    "globals": "^15.1.0"
+  }
+}
