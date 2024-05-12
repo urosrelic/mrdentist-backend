@@ -1,1 +1,8 @@
 node_modules/
+idea/
+/.idea/dataSources.xml
+/.idea/modules.xml
+/.idea/mrdentist-node-backend.iml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/sqldialects.xml
+/.idea/vcs.xml
