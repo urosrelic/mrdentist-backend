@@ -1,5 +1,4 @@
 const connection = require('../db/db');
-const ROLES = require('../constants/roles');
 const bcrypt = require('bcrypt');
 const UserDTO = require("../dto/UserDTO");
 
