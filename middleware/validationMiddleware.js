@@ -145,6 +145,7 @@ const validatePatientId = async (req, res, next) => {
 };
 
 
+
 module.exports = {
   validatePatientId,
   validateAuthentication,

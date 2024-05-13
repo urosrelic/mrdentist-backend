@@ -6,6 +6,10 @@ const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
+    if(!password || !username) {
+        return res.status(400).send({error: 'All fields are required'});
+    }
+
     const [rows] = await connection.query(
       'SELECT * FROM user where username = ? ',
       [username]
