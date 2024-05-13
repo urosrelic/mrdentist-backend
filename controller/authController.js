@@ -1,36 +1,32 @@
 const connection = require('../db/db');
 const ROLES = require('../constants/roles');
+const bcrypt = require('bcrypt');
 
 const login = async (req, res) => {
   try {
-    const { username } = req.body;
+    const { username, password } = req.body;
 
     const [rows] = await connection.query(
-      'SELECT * FROM user where username = ? AND role = ?',
-      [username, ROLES.ROLE_PATIENT]
+      'SELECT * FROM user where username = ? ',
+      [username]
     );
 
     if (rows.length > 0) {
-      req.session.user = rows[0]; // Save patient information in session
+      const user = rows[0];
+
+      const passwordMatch = await bcrypt.compare(password, user.password);
+
+      if(!passwordMatch) {
+        return res.status(401).send({error: 'Invalid password'});
+      }
+
+      req.session.user = rows[0];
       return res.status(200).send({
         user: req.session.user,
-        msg: 'Patient logged in successfully',
+        msg: 'User logged in successfully',
       });
     } else {
-      const [rows] = await connection.query(
-        'SELECT * FROM user WHERE username = ? AND role = ?',
-        [username, ROLES.ROLE_DENTIST]
-      );
-
-      if (rows.length > 0) {
-        req.session.user = rows[0]; // Save dentist information in session
-        return res.status(200).send({
-          user: req.session.user,
-          msg: 'Dentist logged in successfully',
-        });
-      } else {
-        return res.status(404).send('Username not found');
-      }
+      return res.status(404).send({error: 'Username not found'});
     }
   } catch (error) {
     console.error(error);

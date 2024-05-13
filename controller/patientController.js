@@ -1,6 +1,7 @@
 const connection = require('../db/db');
 
 const ROLES = require('../constants/roles');
+const bcrypt = require("bcrypt");
 
 const getPatients = async (req, res) => {
   try {
@@ -13,23 +14,22 @@ const getPatients = async (req, res) => {
   }
 };
 
-const insertPatient = async (req, res) => {
+const register = async (req, res) => {
   try {
-    const { username, firstName, lastName } = req.body;
+    const { username, password, firstName, lastName } = req.body;
 
-    // Check if the citizen number already exists in the database
     const [existingPatient] = await connection.query(
       'SELECT * FROM user WHERE username = ? AND role = ?',
       [username, ROLES.ROLE_PATIENT]
     );
 
-    if (existingPatient.length > 0) {
-      return res.status(400).json({ error: 'Citizen number already exists' });
-    }
+    // hash password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const [result] = await connection.query(
-      'INSERT INTO user (first_name, last_name, username, role) VALUES (?, ?, ?, ?)',
-      [firstName, lastName, username, ROLES.ROLE_PATIENT]
+      'INSERT INTO user (first_name, last_name, username, password, role) VALUES (?, ?, ?, ?, ?)',
+      [firstName, lastName, username, hashedPassword, ROLES.ROLE_PATIENT]
     );
 
     return res.status(201).json({
@@ -138,7 +138,7 @@ const cancelAppointment = async (req, res) => {
 module.exports = {
   getPatients,
   cancelAppointment,
-  insertPatient,
+  register,
   bookAppointment,
   getAppointments,
 };

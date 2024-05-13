@@ -8,16 +8,18 @@ const {
 } = require('../middleware/validationMiddleware');
 
 router.get('/patient', patientsController.getPatients);
+
 router.get(
   '/patient/appointments',
   validateAuthentication,
 
   patientsController.getAppointments
 );
+
 router.post(
   '/patient',
   validatePatientRegistration,
-  patientsController.insertPatient
+  patientsController.register
 );
 router.post(
   '/patient/book-appointment',

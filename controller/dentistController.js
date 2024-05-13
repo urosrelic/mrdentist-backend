@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 
 const ROLES = require('../constants/roles');
+const bcrypt = require("bcrypt");
 
 const getDentists = async (req, res) => {
   try {
@@ -41,18 +42,18 @@ const getAppointments = async (req, res) => {
   }
 };
 
-const insertDentist = async (req, res) => {
+const register = async (req, res) => {
   try {
-    const { firstName, lastName } = req.body;
+    const { firstName, lastName, password } = req.body;
 
     const uuid = uuidv4();
     const hashedUuid = crypto.createHash('sha256').update(uuid).digest('hex');
     const shortHashedUuid = hashedUuid.substring(0, 6);
-    const uniqueIdentifier = `mrdentist-${firstName}${lastName}-${shortHashedUuid}`;
+    const username = `mrdentist-${firstName}${lastName}-${shortHashedUuid}`;
 
     const [existingDentist] = await connection.query(
       'SELECT * FROM user where username = ? AND role = ?',
-      [uniqueIdentifier, ROLES.ROLE_DENTIST]
+      [username, ROLES.ROLE_DENTIST]
     );
 
     if (existingDentist.length > 0) {
@@ -61,9 +62,13 @@ const insertDentist = async (req, res) => {
       });
     }
 
+    // hash password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     const [result] = await connection.query(
-      'INSERT INTO user (first_name, last_name, username, role) VALUES (?, ?, ?, ?)',
-      [firstName, lastName, uniqueIdentifier, ROLES.ROLE_DENTIST]
+      'INSERT INTO user (first_name, last_name, username, password, role) VALUES (?, ?, ?, ?, ?)',
+      [firstName, lastName, username, hashedPassword, ROLES.ROLE_DENTIST]
     );
 
     return res.status(201).json({
@@ -153,7 +158,7 @@ const cancelAppointment = async (req, res) => {
 
 module.exports = {
   getDentists,
-  insertDentist,
+  register,
   cancelAppointment,
   bookAppointment,
   getAppointments,
