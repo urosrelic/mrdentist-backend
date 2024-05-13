@@ -21,7 +21,6 @@ const validateDentistRegistration = (req, res, next) => {
   next();
 };
 
-
 const validateAuthentication = async (req, res, next) => {
   const user = req.session.user;
 
