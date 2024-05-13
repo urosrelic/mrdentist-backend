@@ -1,6 +1,6 @@
 const connection = require('../db/db');
-const ROLES = require('../constants/roles');
 const bcrypt = require('bcrypt');
+const UserDTO = require("../dto/UserDTO");
 
 const login = async (req, res) => {
   try {
@@ -20,7 +20,14 @@ const login = async (req, res) => {
         return res.status(401).send({error: 'Invalid password'});
       }
 
-      req.session.user = rows[0];
+      req.session.user = new UserDTO(
+        user.id,
+        user.first_name,
+        user.last_name,
+        user.username,
+        user.role
+      );
+
       return res.status(200).send({
         user: req.session.user,
         msg: 'User logged in successfully',
