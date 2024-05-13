@@ -2,9 +2,9 @@ const ROLES = require('../constants/roles');
 const connection = require('../db/db');
 
 const validatePatientRegistration = (req, res, next) => {
-  const { firstName, lastName, username } = req.body;
+  const { firstName, lastName, username, password } = req.body;
 
-  if (!firstName || !lastName || !username) {
+  if (!firstName || !lastName || !username || !password) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
@@ -12,14 +12,15 @@ const validatePatientRegistration = (req, res, next) => {
 };
 
 const validateDentistRegistration = (req, res, next) => {
-  const { firstName, lastName } = req.body;
+  const { firstName, lastName, password } = req.body;
 
-  if (!firstName || !lastName) {
+  if (!firstName || !lastName || !password) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   next();
 };
+
 
 const validateAuthentication = async (req, res, next) => {
   const user = req.session.user;
@@ -143,6 +144,7 @@ const validatePatientId = async (req, res, next) => {
 
   next();
 };
+
 
 module.exports = {
   validatePatientId,
